@@ -1,0 +1,398 @@
+/* ==========================================================================
+   IYKESON TILES STOCK -- Stylesheet
+   Design direction: warm limestone/warehouse-floor background, a ceramic
+   glaze teal as the main color, and clay/terracotta reserved for warnings
+   (fitting, since that IS the color of raw clay tile). Cards sit in a
+   tile-like grid. Big, bold numbers are the "hero" of each card, since the
+   stock count is the entire point of this app.
+   ========================================================================== */
+
+/* ---------- Design tokens (change these to re-theme the whole app) ---------- */
+:root {
+  --bg: #efece4;              /* warm limestone background */
+  --surface: #fbfaf6;         /* card background */
+  --ink: #211f1b;             /* near-black warm charcoal for text */
+  --ink-soft: #6b6559;        /* muted text for secondary info */
+  --border: #ddd6c7;          /* hairline borders */
+
+  --primary: #2b6e68;         /* ceramic glaze teal -- main brand color */
+  --primary-dark: #1f504c;
+  --clay: #b5562e;            /* raw clay -- used for warnings/low stock */
+  --success: #3f7d52;         /* healthy stock */
+  --danger: #a13d35;          /* remove actions / critical stock */
+
+  --radius: 10px;
+  --font-display: "Archivo", "Segoe UI", Arial, sans-serif;
+  --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+/* ---------- Reset & base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  padding-bottom: 84px; /* leaves room for the fixed bottom nav */
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 18px 20px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-header h1 {
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
+.app-header h1 span {
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.header-date {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+/* ---------- Main layout / tab switching ---------- */
+main {
+  padding: 18px 16px 30px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active-tab {
+  display: block;
+}
+
+.panel-header {
+  margin-bottom: 6px;
+}
+
+.panel-hint {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin: 6px 0 16px;
+}
+
+/* ---------- Controls bar (search + filter) ---------- */
+.controls-bar {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.controls-bar input,
+.controls-bar select {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Summary strip ---------- */
+.summary-strip {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.summary-item {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.summary-number {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.summary-warning .summary-number {
+  color: var(--clay);
+}
+
+.summary-label {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- Stock grid (tile-like layout) ---------- */
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.stock-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border-left: 5px solid var(--success); /* recolored per stock level in JS */
+  cursor: pointer;
+}
+
+.stock-card.level-low {
+  border-left-color: var(--clay);
+}
+
+.stock-card.level-critical {
+  border-left-color: var(--danger);
+}
+
+.stock-card-photo {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  background: var(--border);
+  display: block;
+}
+
+.stock-card-photo.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+}
+
+.stock-card-body {
+  padding: 10px 12px 12px;
+}
+
+.stock-card-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.25;
+  margin-bottom: 2px;
+}
+
+.stock-card-meta {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.stock-card-qty {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.stock-card-qty-label {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  display: block;
+  margin-top: 2px;
+}
+
+/* ---------- Forms ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 14px 0 6px;
+  color: var(--ink);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  width: 100%;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.photo-preview {
+  margin-top: 10px;
+  width: 140px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 15px 18px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:active {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* ---------- History list ---------- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-entry {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-entry-main {
+  font-size: 0.88rem;
+}
+
+.history-entry-name {
+  font-weight: 700;
+}
+
+.history-entry-meta {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.history-qty {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.history-qty.add {
+  color: var(--success);
+}
+
+.history-qty.remove {
+  color: var(--danger);
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 40px 20px;
+  font-size: 0.9rem;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+
+/* ---------- Bottom navigation ---------- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 10;
+}
+
+.nav-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 4px 8px;
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.nav-btn.active {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* ---------- Small screens: keep cards comfortably tappable ---------- */
+@media (max-width: 360px) {
+  .stock-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}

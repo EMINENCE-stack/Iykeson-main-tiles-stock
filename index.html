@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- This line makes the app resize correctly on phones/tablets instead of showing a tiny "zoomed out" version -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IYKESON TILES STOCK</title>
+  <!-- These lines are what make the app "installable" as a real app icon,
+       and tell the phone what color/icon to show for it -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2b6e68">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <!-- Google Fonts: falls back to system fonts automatically if there's no internet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <!-- This bar stays fixed at the top so it's always visible while scrolling -->
+  <header class="app-header">
+    <h1>IYKESON <span>TILES STOCK</span></h1>
+    <p id="today-date" class="header-date"></p>
+  </header>
+
+  <!-- ============ MAIN CONTENT AREA ============ -->
+  <!-- Only ONE of these <section> elements is visible at a time.
+       We show/hide them using JavaScript when a nav button is tapped -->
+  <main>
+
+    <!-- ---------- DASHBOARD TAB ---------- -->
+    <section id="dashboard" class="tab-panel active-tab">
+      <div class="panel-header">
+        <h2>Current Stock</h2>
+      </div>
+
+      <!-- Search and filter controls -->
+      <div class="controls-bar">
+        <input type="text" id="search-input" placeholder="Search by design, color, size...">
+        <select id="filter-company">
+          <option value="">All Companies</option>
+        </select>
+      </div>
+
+      <!-- Small summary strip: total designs, total tiles, low stock count -->
+      <div class="summary-strip">
+        <div class="summary-item">
+          <span class="summary-number" id="summary-designs">0</span>
+          <span class="summary-label">designs</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-number" id="summary-total">0</span>
+          <span class="summary-label">total tiles</span>
+        </div>
+        <div class="summary-item summary-warning">
+          <span class="summary-number" id="summary-low">0</span>
+          <span class="summary-label">low stock</span>
+        </div>
+      </div>
+
+      <!-- Tile design cards get inserted here by JavaScript -->
+      <div id="stock-grid" class="stock-grid">
+        <!-- Cards are generated dynamically -- see app.js renderDashboard() -->
+      </div>
+
+      <!-- Shown only when there are zero designs saved yet -->
+      <p id="empty-state" class="empty-state" hidden>
+        No tile designs yet. Tap "+ Add Stock" below to add your first design.
+      </p>
+    </section>
+
+    <!-- ---------- ADD STOCK TAB ---------- -->
+    <section id="add-stock" class="tab-panel">
+      <div class="panel-header">
+        <h2>Add Stock</h2>
+      </div>
+      <p class="panel-hint">
+        If this design already exists (same name, color, size and company), the quantity
+        will simply be added to it. If it's new, it will be created automatically.
+      </p>
+
+      <form id="add-form">
+        <label for="add-name">Design Name</label>
+        <input type="text" id="add-name" placeholder="e.g. Marble Grey Gloss" required>
+
+        <label for="add-color">Color</label>
+        <input type="text" id="add-color" placeholder="e.g. Grey" required>
+
+        <label for="add-size">Size</label>
+        <input type="text" id="add-size" placeholder="e.g. 60x60" required>
+
+        <label for="add-company">Company / Supplier</label>
+        <input type="text" id="add-company" placeholder="e.g. Twyford" required>
+
+        <label for="add-quantity">Quantity to Add</label>
+        <input type="number" id="add-quantity" min="1" placeholder="e.g. 100" required>
+
+        <label for="add-photo">Photo (optional)</label>
+        <!-- capture="environment" opens the back camera directly on a phone/tablet -->
+        <input type="file" id="add-photo" accept="image/*" capture="environment">
+        <img id="add-photo-preview" class="photo-preview" hidden>
+
+        <label for="add-note">Note (optional)</label>
+        <input type="text" id="add-note" placeholder="e.g. New delivery">
+
+        <label for="add-by">Recorded By</label>
+        <input type="text" id="add-by" placeholder="Your name" required>
+
+        <button type="submit" class="btn btn-primary">Add Stock</button>
+      </form>
+    </section>
+
+    <!-- ---------- REMOVE STOCK TAB ---------- -->
+    <section id="remove-stock" class="tab-panel">
+      <div class="panel-header">
+        <h2>Remove Stock</h2>
+      </div>
+
+      <form id="remove-form">
+        <label for="remove-item">Select Design</label>
+        <select id="remove-item" required>
+          <option value="">-- choose a design --</option>
+        </select>
+
+        <p id="remove-current-stock" class="panel-hint"></p>
+
+        <label for="remove-quantity">Quantity to Remove</label>
+        <input type="number" id="remove-quantity" min="1" required>
+
+        <label for="remove-reason">Reason</label>
+        <select id="remove-reason" required>
+          <option value="Sold">Sold</option>
+          <option value="Damaged">Damaged</option>
+          <option value="Returned to Supplier">Returned to Supplier</option>
+          <option value="Recount Correction">Recount Correction</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label for="remove-by">Recorded By</label>
+        <input type="text" id="remove-by" placeholder="Your name" required>
+
+        <button type="submit" class="btn btn-danger">Remove Stock</button>
+      </form>
+    </section>
+
+    <!-- ---------- HISTORY TAB ---------- -->
+    <section id="history" class="tab-panel">
+      <div class="panel-header">
+        <h2>Activity History</h2>
+      </div>
+      <div id="history-list" class="history-list">
+        <!-- Movement log entries get inserted here by JavaScript -->
+      </div>
+      <p id="history-empty" class="empty-state" hidden>No activity recorded yet.</p>
+    </section>
+
+    <!-- ---------- BACKUP TAB ---------- -->
+    <section id="backup" class="tab-panel">
+      <div class="panel-header">
+        <h2>Backup Your Data</h2>
+      </div>
+      <p class="panel-hint">
+        All your data is saved directly on this device, so it works even with no internet.
+        That also means it's important to back it up regularly in case this device is lost,
+        damaged, or its storage is cleared.
+      </p>
+
+      <button id="btn-export-json" class="btn btn-primary">Download Full Backup (.json)</button>
+      <p class="panel-hint">Use this file to restore everything if needed. Keep it somewhere safe (email it to yourself, save to Google Drive, etc.)</p>
+
+      <button id="btn-export-csv" class="btn btn-secondary">Download Report (.csv)</button>
+      <p class="panel-hint">A simple spreadsheet-friendly summary of current stock, good for sharing or printing.</p>
+
+      <hr class="divider">
+
+      <h3>Restore from Backup</h3>
+      <p class="panel-hint">Choose a previously downloaded .json backup file to restore it onto this device.</p>
+      <input type="file" id="restore-input" accept="application/json">
+    </section>
+
+  </main>
+
+  <!-- ============ BOTTOM NAVIGATION ============ -->
+  <!-- data-target tells app.js which <section> id to show when this button is tapped -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-target="dashboard">
+      <span class="nav-icon">&#9638;</span>
+      <span>Dashboard</span>
+    </button>
+    <button class="nav-btn" data-target="add-stock">
+      <span class="nav-icon">&#43;</span>
+      <span>Add</span>
+    </button>
+    <button class="nav-btn" data-target="remove-stock">
+      <span class="nav-icon">&#8722;</span>
+      <span>Remove</span>
+    </button>
+    <button class="nav-btn" data-target="history">
+      <span class="nav-icon">&#8635;</span>
+      <span>History</span>
+    </button>
+    <button class="nav-btn" data-target="backup">
+      <span class="nav-icon">&#8681;</span>
+      <span>Backup</span>
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
+  <script>
+    // Registers the service worker so the app gets cached for offline use.
+    // This only activates on a real hosted address (like GitHub Pages),
+    // not on plain local files -- which is exactly why we're moving to
+    // GitHub Pages hosting.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js")
+          .then(() => console.log("Service worker registered -- app will now work offline."))
+          .catch((err) => console.log("Service worker registration failed:", err));
+      });
+    }
+  </script>
+</body>
+</html>
