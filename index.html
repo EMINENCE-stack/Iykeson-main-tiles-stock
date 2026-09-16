@@ -119,12 +119,18 @@
       </div>
 
       <form id="remove-form">
-        <label for="remove-item">Select Design</label>
-        <select id="remove-item" required>
-          <option value="">-- choose a design --</option>
-        </select>
+        <label for="remove-search">Search Design</label>
+        <input type="text" id="remove-search" placeholder="Type a name, color, size, or company...">
 
-        <p id="remove-current-stock" class="panel-hint"></p>
+        <!-- Matching tiles appear here as you type; tapping one selects it -->
+        <div id="remove-results" class="search-results"></div>
+
+        <!-- Shows which tile is currently selected, and its live stock count -->
+        <div id="remove-selected" class="selected-item" hidden></div>
+
+        <!-- This hidden field is what actually gets submitted -- it holds the
+             selected item's id, set by JavaScript when a search result is tapped -->
+        <input type="hidden" id="remove-item-id" required>
 
         <label for="remove-quantity">Quantity to Remove</label>
         <input type="number" id="remove-quantity" min="1" required>
