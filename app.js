@@ -1,14 +1,14 @@
 /* ==========================================================================
    IYKESON TILES STOCK -- app.js
 
-   HOW THE DATA MODEL WORKS (read this before editing anything):
+   HOW THE DATA MODEL WORKS :
 
    We do NOT store "current stock" as one editable number. Instead, we store
    two separate lists:
 
    1. ITEMS -- one entry per unique tile design (name + color + size + company)
       e.g. { id: "abc123", name: "Marble Grey Gloss", color: "Grey",
-             size: "60x60", company: "Twyford", photo: "data:image/..." }
+             size: "60x60", company: "Goodwill", photo: "data:image/..." }
 
    2. MOVEMENTS -- a running log of every single add/remove event
       e.g. { id: "m1", itemId: "abc123", type: "add", quantity: 100,
@@ -285,47 +285,104 @@ function initAddForm() {
 }
 
 // ==========================================================================
-// REMOVE STOCK FORM
+// REMOVE STOCK FORM -- searchable tile picker
 // ==========================================================================
-function renderRemoveDropdown() {
+
+// Renders the list of matching tiles below the search box as the person types
+function renderRemoveSearchResults() {
+  const searchTerm = document.getElementById("remove-search").value.trim().toLowerCase();
+  const resultsBox = document.getElementById("remove-results");
+  resultsBox.innerHTML = "";
+
+  // Don't show a giant list of everything until the person actually types
+  // something -- this is the whole point of the fix (no more endless scrolling)
+  if (!searchTerm) {
+    resultsBox.hidden = true;
+    return;
+  }
+
   const items = loadItems();
   const movements = loadMovements();
-  const select = document.getElementById("remove-item");
-  const currentValue = select.value;
 
-  select.innerHTML = `<option value="">-- choose a design --</option>`;
-  items.forEach(item => {
-    const stock = getCurrentStock(item.id, movements);
-    const opt = document.createElement("option");
-    opt.value = item.id;
-    opt.textContent = `${item.name} (${item.color}, ${item.size}) -- ${stock} in stock`;
-    select.appendChild(opt);
+  const matches = items.filter(item => {
+    const searchable = `${item.name} ${item.color} ${item.size} ${item.company}`.toLowerCase();
+    return searchable.includes(searchTerm);
   });
 
-  select.value = currentValue;
+  if (matches.length === 0) {
+    resultsBox.innerHTML = `<div class="search-result-empty">No matching design found.</div>`;
+    resultsBox.hidden = false;
+    return;
+  }
+
+  matches.forEach(item => {
+    const stock = getCurrentStock(item.id, movements);
+    const row = document.createElement("div");
+    row.className = "search-result-row";
+    row.innerHTML = `
+      <div>
+        <div class="search-result-name">${item.name}</div>
+        <div class="search-result-meta">${item.color} &middot; ${item.size} &middot; ${item.company}</div>
+      </div>
+      <div class="search-result-stock">${stock}</div>
+    `;
+    // Tapping a row is how a design gets "selected" -- see selectRemoveItem()
+    row.addEventListener("click", () => selectRemoveItem(item.id));
+    resultsBox.appendChild(row);
+  });
+
+  resultsBox.hidden = false;
+}
+
+// Runs when the person taps a specific tile from the search results
+function selectRemoveItem(itemId) {
+  const items = loadItems();
+  const movements = loadMovements();
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+
+  const stock = getCurrentStock(itemId, movements);
+
+  // Save the choice into the hidden field -- this is what actually gets submitted
+  document.getElementById("remove-item-id").value = itemId;
+
+  // Show a clear confirmation of what's selected, with its live stock count
+  const selectedBox = document.getElementById("remove-selected");
+  selectedBox.innerHTML = `
+    Selected: <strong>${item.name}</strong> (${item.color}, ${item.size}) --
+    <strong>${stock} in stock</strong>
+    <button type="button" id="clear-selection" class="clear-btn">Change</button>
+  `;
+  selectedBox.hidden = false;
+
+  // Once a design is picked, hide the search box and results -- keeps the
+  // form clean and makes it obvious a selection has been made
+  document.getElementById("remove-search").value = "";
+  document.getElementById("remove-results").hidden = true;
+
+  // "Change" button lets them clear the selection and search again
+  document.getElementById("clear-selection").addEventListener("click", () => {
+    document.getElementById("remove-item-id").value = "";
+    selectedBox.hidden = true;
+  });
 }
 
 function initRemoveForm() {
   const form = document.getElementById("remove-form");
-  const itemSelect = document.getElementById("remove-item");
-  const currentStockDisplay = document.getElementById("remove-current-stock");
+  const searchInput = document.getElementById("remove-search");
 
-  // Show the current stock whenever a design is picked, so the person knows
-  // what they're working with before typing a quantity
-  itemSelect.addEventListener("change", () => {
-    const movements = loadMovements();
-    if (!itemSelect.value) {
-      currentStockDisplay.textContent = "";
-      return;
-    }
-    const stock = getCurrentStock(itemSelect.value, movements);
-    currentStockDisplay.textContent = `Current stock: ${stock} tiles`;
-  });
+  // Re-filter the results list on every keystroke
+  searchInput.addEventListener("input", renderRemoveSearchResults);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const itemId = itemSelect.value;
+    const itemId = document.getElementById("remove-item-id").value;
+    if (!itemId) {
+      alert("Please search and select a design first.");
+      return;
+    }
+
     const quantity = parseInt(document.getElementById("remove-quantity").value, 10);
     const reason = document.getElementById("remove-reason").value;
     const by = document.getElementById("remove-by").value;
@@ -354,7 +411,9 @@ function initRemoveForm() {
 
     saveMovements(movements);
     form.reset();
-    currentStockDisplay.textContent = "";
+    document.getElementById("remove-item-id").value = "";
+    document.getElementById("remove-selected").hidden = true;
+    document.getElementById("remove-results").hidden = true;
 
     renderAll();
     goToTab("dashboard");
@@ -492,7 +551,6 @@ function initSearchAndFilter() {
 function renderAll() {
   renderCompanyFilterOptions();
   renderDashboard();
-  renderRemoveDropdown();
   renderHistory();
 }
 
