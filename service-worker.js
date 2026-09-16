@@ -14,7 +14,7 @@
    background (unlike the local-server approach we were fighting with).
    ========================================================================== */
 
-const CACHE_NAME = "iykeson-tiles-stock-v1";
+const CACHE_NAME = "iykeson-tiles-stock-v2"; // bumped from v1 
 
 // Every file needed for the app to run completely, listed so it can be
 // saved to the cache in one go
