@@ -1,13 +1,9 @@
 /* ==========================================================================
    IYKESON TILES STOCK -- Stylesheet
-   Design direction: warm limestone/warehouse-floor background, a ceramic
-   glaze teal as the main color, and clay/terracotta reserved for warnings
-   (fitting, since that IS the color of raw clay tile). Cards sit in a
-   tile-like grid. Big, bold numbers are the "hero" of each card, since the
-   stock count is the entire point of this app.
+  
    ========================================================================== */
 
-/* ---------- Design tokens (change these to re-theme the whole app) ---------- */
+
 :root {
   --bg: #efece4;              /* warm limestone background */
   --surface: #fbfaf6;         /* card background */
@@ -215,6 +211,90 @@ main {
   color: var(--ink-soft);
   display: block;
   margin-top: 2px;
+}
+
+/* ---------- Searchable tile picker (Remove Stock tab) ---------- */
+.search-results {
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.search-results[hidden] {
+  display: none;
+}
+
+.search-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.search-result-row:last-child {
+  border-bottom: none;
+}
+
+.search-result-row:active {
+  background: var(--bg);
+}
+
+.search-result-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.search-result-meta {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.search-result-stock {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.search-result-empty {
+  padding: 14px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  background: var(--surface);
+}
+
+.selected-item {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.selected-item[hidden] {
+  display: none;
+}
+
+.clear-btn {
+  margin-left: 8px;
+  background: none;
+  border: none;
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
 }
 
 /* ---------- Forms ---------- */
