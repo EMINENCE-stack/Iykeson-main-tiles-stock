@@ -1,14 +1,14 @@
 /* ==========================================================================
    IYKESON TILES STOCK -- app.js
 
-   HOW THE DATA MODEL WORKS :
+   HOW THE DATA MODEL WORKS 
 
    We do NOT store "current stock" as one editable number. Instead, we store
    two separate lists:
 
    1. ITEMS -- one entry per unique tile design (name + color + size + company)
       e.g. { id: "abc123", name: "Marble Grey Gloss", color: "Grey",
-             size: "60x60", company: "Goodwill", photo: "data:image/..." }
+             size: "60x60", company: "Twyford", photo: "data:image/..." }
 
    2. MOVEMENTS -- a running log of every single add/remove event
       e.g. { id: "m1", itemId: "abc123", type: "add", quantity: 100,
@@ -17,7 +17,7 @@
    The CURRENT STOCK for any item is always CALCULATED by adding up its
    "add" movements and subtracting its "remove" movements -- never typed in
    directly. This means every change is traceable, and nobody can silently
-   overwrite a number without leaving a record. See getCurrentStock() below.
+   overwrite a number without leaving a record. 
    ========================================================================== */
 
 // ---------- Constants ----------
@@ -428,13 +428,25 @@ function renderHistory() {
   const movements = loadMovements();
   const list = document.getElementById("history-list");
   const emptyState = document.getElementById("history-empty");
+  const searchTerm = document.getElementById("history-search").value.trim().toLowerCase();
 
   list.innerHTML = "";
 
   // Show newest first -- slice() copies the array so we don't reorder the saved data itself
   const sorted = movements.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  sorted.forEach(m => {
+  // Filter to only movements whose ITEM matches the search text (name, color,
+  // size or company) -- this is what lets the storekeeper find "the whole
+  // history" for one specific tile instead of scrolling through everything
+  const filtered = sorted.filter(m => {
+    if (!searchTerm) return true; // no search yet -- show everything
+    const item = items.find(i => i.id === m.itemId);
+    if (!item) return false;
+    const searchable = `${item.name} ${item.color} ${item.size} ${item.company}`.toLowerCase();
+    return searchable.includes(searchTerm);
+  });
+
+  filtered.forEach(m => {
     const item = items.find(i => i.id === m.itemId);
     const itemName = item ? item.name : "(deleted design)";
     const dateLabel = new Date(m.date).toLocaleString();
@@ -452,8 +464,20 @@ function renderHistory() {
     list.appendChild(entry);
   });
 
-  emptyState.hidden = movements.length > 0;
-  list.hidden = movements.length === 0;
+  // Three possible states: no data at all, no matches for the current
+  // search, or a normal filled list -- each needs a slightly different message
+  if (movements.length === 0) {
+    emptyState.textContent = "No activity recorded yet.";
+    emptyState.hidden = false;
+    list.hidden = true;
+  } else if (filtered.length === 0) {
+    emptyState.textContent = "No history found for that search.";
+    emptyState.hidden = false;
+    list.hidden = true;
+  } else {
+    emptyState.hidden = true;
+    list.hidden = false;
+  }
 }
 
 // ==========================================================================
@@ -544,6 +568,7 @@ function setTodayDate() {
 function initSearchAndFilter() {
   document.getElementById("search-input").addEventListener("input", renderDashboard);
   document.getElementById("filter-company").addEventListener("change", renderDashboard);
+  document.getElementById("history-search").addEventListener("input", renderHistory);
 }
 
 // Re-runs every render function -- called after any data change so the whole
