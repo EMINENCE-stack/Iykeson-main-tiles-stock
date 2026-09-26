@@ -3,7 +3,6 @@
   
    ========================================================================== */
 
-
 :root {
   --bg: #efece4;              /* warm limestone background */
   --surface: #fbfaf6;         /* card background */
@@ -370,6 +369,11 @@ select:focus {
 .btn-danger {
   background: var(--danger);
   color: #fff;
+}
+
+/* ---------- History search ---------- */
+.history-search-input {
+  margin: 14px 0 16px;
 }
 
 /* ---------- History list ---------- */
