@@ -5,8 +5,7 @@
   <!-- This line makes the app resize correctly on phones/tablets instead of showing a tiny "zoomed out" version -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IYKESON TILES STOCK</title>
-  <!-- These lines are what make the app "installable" as a real app icon,
-       and tell the phone what color/icon to show for it -->
+  <!-- These lines are what make the app "installable" as a real app icon -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2b6e68">
   <link rel="icon" href="icon-192.png">
@@ -19,7 +18,7 @@
 <body>
 
   <!-- ============ HEADER ============ -->
-  <!-- This bar stays fixed at the top so it's always visible while scrolling -->
+  
   <header class="app-header">
     <h1>IYKESON <span>TILES STOCK</span></h1>
     <p id="today-date" class="header-date"></p>
@@ -62,7 +61,7 @@
 
       <!-- Tile design cards get inserted here by JavaScript -->
       <div id="stock-grid" class="stock-grid">
-        <!-- Cards are generated dynamically -- see app.js renderDashboard() -->
+        <!-- Cards are generated dynamically  -->
       </div>
 
       <!-- Shown only when there are zero designs saved yet -->
@@ -78,7 +77,7 @@
       </div>
       <p class="panel-hint">
         If this design already exists (same name, color, size and company), the quantity
-        will simply be added to it. If it's new, it will be created automatically.
+        will be added to it. If it's new, it will be created automatically.
       </p>
 
       <form id="add-form">
@@ -128,8 +127,7 @@
         <!-- Shows which tile is currently selected, and its live stock count -->
         <div id="remove-selected" class="selected-item" hidden></div>
 
-        <!-- This hidden field is what actually gets submitted -- it holds the
-             selected item's id, set by JavaScript when a search result is tapped -->
+       
         <input type="hidden" id="remove-item-id" required>
 
         <label for="remove-quantity">Quantity to Remove</label>
@@ -156,6 +154,10 @@
       <div class="panel-header">
         <h2>Activity History</h2>
       </div>
+
+      <input type="text" id="history-search" class="history-search-input"
+             placeholder="Search by design, color, size, or company...">
+
       <div id="history-list" class="history-list">
         <!-- Movement log entries get inserted here by JavaScript -->
       </div>
@@ -189,7 +191,7 @@
   </main>
 
   <!-- ============ BOTTOM NAVIGATION ============ -->
-  <!-- data-target tells app.js which <section> id to show when this button is tapped -->
+
   <nav class="bottom-nav">
     <button class="nav-btn active" data-target="dashboard">
       <span class="nav-icon">&#9638;</span>
@@ -215,10 +217,7 @@
 
   <script src="app.js"></script>
   <script>
-    // Registers the service worker so the app gets cached for offline use.
-    // This only activates on a real hosted address (like GitHub Pages),
-    // not on plain local files -- which is exactly why we're moving to
-    // GitHub Pages hosting.
+  
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("service-worker.js")
