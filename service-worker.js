@@ -1,7 +1,7 @@
 /* ==========================================================================
    service-worker.js
 
-   WHAT THIS FILE DOES (in plain terms):
+   WHAT THIS FILE DOES :
    A service worker is a small script the browser keeps running quietly in
    the background, separate from your normal page. Its job here is simple:
    the FIRST time someone opens the app (while online), it saves a copy of
@@ -11,10 +11,10 @@
 
    This is what makes a plain website behave like a real installed app that
    works offline, with NO separate server app needed running in the
-   background (unlike the local-server approach we were fighting with).
+   background 
    ========================================================================== */
 
-const CACHE_NAME = "iykeson-tiles-stock-v2"; // bumped from v1 
+const CACHE_NAME = "iykeson-tiles-stock-v3"; // required whenever files change
 
 // Every file needed for the app to run completely, listed so it can be
 // saved to the cache in one go
